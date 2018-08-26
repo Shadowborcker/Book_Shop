@@ -27,11 +27,12 @@ public class Main {
         }
         // Заполняем библиотеку магазина
         ArrayList<Book> library = FillLibrary();
-        FileOutputStream fos = new FileOutputStream(shop_books);
-        ObjectOutputStream oos = new ObjectOutputStream(fos);
-        oos.writeObject(library);
-//        oos.close();
+        try (FileOutputStream fos = new FileOutputStream(shop_books);
+            ObjectOutputStream oos = new ObjectOutputStream(fos)) {
 
+            oos.writeObject(library);
+
+        }
 
 
         System.out.println("Welcome to Black Books, how may I be of service?");
@@ -57,21 +58,22 @@ public class Main {
                     System.out.println("Books currently in store: ");
 
                     try {
-                        library = ReadFile(shop_books);
-                        for (Book b : library) {
+                        ArrayList<Book> temp = ReadFile(shop_books);
+                        for (Book b : temp) {
                             System.out.println("Author: " + b.author + "/ Title: " + b.title + "/  Publisher: "
                                     + b.publisher + "/ Year: " + b.year + "/ Number of pages: " + b.pages + "/ Price: "
                                     + b.price + " Rub." + "/ Quantity: " + b.quantity);
                         }
-                    } catch (ClassNotFoundException e) {
+                    } catch (EOFException | ClassNotFoundException e) {
                         break;
                     }
                     break;
                 case "add book": {
-                    try {
-                        library = ReadFile(shop_books);
-                        AddBook(library);
-                        oos.writeObject(library);
+                    try (FileOutputStream fos = new FileOutputStream(shop_books);
+                         ObjectOutputStream oos = new ObjectOutputStream(fos)) {
+                        ArrayList<Book> temp = ReadFile(shop_books);
+                        AddBook(temp);
+                        oos.writeObject(temp);
 
                     } catch (EOFException | ClassNotFoundException e) {
                         break;
@@ -80,7 +82,8 @@ public class Main {
                     break;
                 }
                 case "remove book": {
-                    try {
+                    try (FileOutputStream fos = new FileOutputStream(shop_books);
+                         ObjectOutputStream oos = new ObjectOutputStream(fos)) {
                         library = ReadFile(shop_books);
                         RemoveBook(library);
                         oos.writeObject(library);
@@ -179,27 +182,28 @@ public class Main {
     // Метод чтения книг из файла в список.
     private static ArrayList<Book> ReadFile(File f) throws IOException, ClassNotFoundException {
 
-        FileInputStream fis = new FileInputStream(f);
-        ObjectInputStream ois = new ObjectInputStream(fis);
         ArrayList<Book> list = new ArrayList<>();
-        Object obj = ois.readObject();
-        if (obj instanceof ArrayList<?>) {
-            ArrayList<?> a1 = (ArrayList<?>) obj;
-            if (a1.size() > 0) {
-                for (int i = 0; i < a1.size(); i++) {
-                    Object o = a1.get(i);
-                    if (o instanceof Book) {
-                        Book b = (Book) o;
-                        list.add(b);
+        try (FileInputStream fis = new FileInputStream(f); ObjectInputStream ois = new ObjectInputStream(fis)) {
+            Object obj = ois.readObject();
+            if (obj instanceof ArrayList<?>) {
+                ArrayList<?> a1 = (ArrayList<?>) obj;
+                if (a1.size() > 0) {
+                    for (int i = 0; i < a1.size(); i++) {
+                        Object o = a1.get(i);
+                        if (o instanceof Book) {
+                            Book b = (Book) o;
+                            list.add(b);
+                        }
                     }
                 }
             }
         }
+
         return list;
     }
 
     // Метод ввода данных книги
-    private static Book newbook() {
+    private static Book Newbook() {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         String name;
         String surname;
@@ -299,7 +303,7 @@ public class Main {
     // Метод для добавления книг в библиотеку вручную.
     private static void AddBook(ArrayList<Book> list) {
 
-        Book b1 = newbook();
+        Book b1 = Newbook();
         boolean wasFound = false;
         for (Book b : list) {
             if (b.author.toLowerCase().equals(b1.author.toLowerCase())
@@ -321,7 +325,7 @@ public class Main {
 
     // Метод для удаления книг из библиотеки вручную.
     private static void RemoveBook(ArrayList<Book> list) {
-        Book b1 = newbook();
+        Book b1 = Newbook();
         Iterator<Book> bookIterator = list.iterator();
 
         boolean wasFound = false;
