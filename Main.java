@@ -15,25 +15,24 @@ public class Main {
     public static void main(String[] args) throws IOException {
         File shop_book_depository = new File("Shop");
         File shop_books = new File(shop_book_depository, "Books");
-        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
-
-        // создаём папку магазина и файл книгохранилища
+        //создаём папку магазина и файл книгохранилища
         if (!shop_book_depository.exists()) {
             shop_book_depository.mkdir();
         }
         if (!shop_books.exists()) {
             shop_books.createNewFile();
         }
-        // Заполняем библиотеку магазина
+        // Заполняем библиотеку магазина, если она пуста
         ArrayList<Book> library = FillLibrary();
-        try (FileOutputStream fos = new FileOutputStream(shop_books);
-            ObjectOutputStream oos = new ObjectOutputStream(fos)) {
+        if (shop_books.length() == 0) {
+            try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(shop_books))) {
+                for (Book b : library) {
+                    oos.writeObject(b);
+                }
 
-            oos.writeObject(library);
-
+            }
         }
-
 
         System.out.println("Welcome to Black Books, how may I be of service?");
         System.out.println("Type \"commands\" for commands list");
@@ -41,12 +40,14 @@ public class Main {
 
         // блок команд
         while (true) {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
             System.out.println("Input command");
             String command = reader.readLine();
 
             switch (command.toLowerCase()) {
                 case "commands":
                     System.out.println("Show books — shows the list of all books in store");
+                    System.out.println("Refill — refills shop's repository with new books");
                     System.out.println("Add book — adds new book to shop's depository");
                     System.out.println("Remove book — removes selected book from shop's depository");
                     System.out.println("Sort books — sorts all books by user defined criteria");
@@ -54,6 +55,16 @@ public class Main {
                     System.out.println("Exit — leave Black Books");
                     System.out.println();
                     break;
+
+                case "refill" :
+                    try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(shop_books))) {
+                        for (Book b : library) {
+                            oos.writeObject(b);
+                        }
+                    }
+                    System.out.println("Shop's depository refilled");
+                    break;
+
                 case "show books":
                     System.out.println("Books currently in store: ");
 
@@ -64,31 +75,32 @@ public class Main {
                                     + b.publisher + "/ Year: " + b.year + "/ Number of pages: " + b.pages + "/ Price: "
                                     + b.price + " Rub." + "/ Quantity: " + b.quantity);
                         }
-                    } catch (EOFException | ClassNotFoundException e) {
+                    } catch (EOFException e) {
                         break;
                     }
                     break;
                 case "add book": {
-                    try (FileOutputStream fos = new FileOutputStream(shop_books);
-                         ObjectOutputStream oos = new ObjectOutputStream(fos)) {
-                        ArrayList<Book> temp = ReadFile(shop_books);
+                    ArrayList<Book> temp = ReadFile(shop_books);
+                    try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(shop_books))) {
                         AddBook(temp);
-                        oos.writeObject(temp);
+                        for (Book b : temp) {
+                            oos.writeObject(b);
+                        }
 
-                    } catch (EOFException | ClassNotFoundException e) {
+                    } catch (EOFException e) {
                         break;
                     }
 
                     break;
                 }
                 case "remove book": {
-                    try (FileOutputStream fos = new FileOutputStream(shop_books);
-                         ObjectOutputStream oos = new ObjectOutputStream(fos)) {
-                        library = ReadFile(shop_books);
-                        RemoveBook(library);
-                        oos.writeObject(library);
-
-                    } catch (EOFException | ClassNotFoundException e) {
+                    ArrayList<Book> temp = ReadFile(shop_books);
+                    try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(shop_books))) {
+                        RemoveBook(temp);
+                        for (Book b : temp) {
+                            oos.writeObject(b);
+                        }
+                    } catch (EOFException e) {
                         break;
                     }
                     break;
@@ -105,21 +117,22 @@ public class Main {
                                     + b.publisher + "/ Year: " + b.year + "/ Number of pages: " + b.pages + "/ Price: "
                                     + b.price + " Rub." + "/ Quantity: " + b.quantity);
                         }
-                    } catch (ClassNotFoundException e) {
+                    } catch (EOFException e) {
                         break;
                     }
                     break;
                 }
                 case "find book": {
-                    FindBook(library);
+                    ArrayList<Book> temp = ReadFile(shop_books);
+                    FindBook(temp);
                     break;
                 }
 
 
             }
             if (command.toLowerCase().equals("exit")) {
+                reader.close();
                 System.out.println("See you again sir, have a nice day!");
-
                 break;
             }
 
@@ -180,40 +193,27 @@ public class Main {
     }
 
     // Метод чтения книг из файла в список.
-    private static ArrayList<Book> ReadFile(File f) throws IOException, ClassNotFoundException {
+    private static ArrayList<Book> ReadFile(File f) throws IOException {
 
-        ArrayList<Book> list = new ArrayList<>();
-        try (FileInputStream fis = new FileInputStream(f); ObjectInputStream ois = new ObjectInputStream(fis)) {
-            Object obj = ois.readObject();
-            if (obj instanceof ArrayList<?>) {
-                ArrayList<?> a1 = (ArrayList<?>) obj;
-                if (a1.size() > 0) {
-                    for (int i = 0; i < a1.size(); i++) {
-                        Object o = a1.get(i);
-                        if (o instanceof Book) {
-                            Book b = (Book) o;
-                            list.add(b);
-                        }
-                    }
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(f))) {
+            ArrayList<Book> list = new ArrayList<>();
+            while (true) {
+                try {
+                    list.add((Book) ois.readObject());
+                } catch (EOFException | ClassNotFoundException e) {
+                    return list;
                 }
             }
         }
-
-        return list;
     }
 
     // Метод ввода данных книги
     private static Book Newbook() {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-        String name;
-        String surname;
-        String title;
-        String publisher;
-        int year;
-        int pages;
-        int price;
-        int quantity;
+        String name, surname, author, title, publisher;
+        int year, pages, price, quantity;
         while (true) {
+
             try {
                 System.out.println("Enter author's name");
                 name = reader.readLine();
@@ -233,7 +233,7 @@ public class Main {
             }
         }
 
-        String author = (surname + " " + name);
+        author = (surname + " " + name);
         while (true) {
             try {
                 System.out.println("Enter title");
@@ -259,7 +259,7 @@ public class Main {
                 if (year <= 0 || year > Calendar.getInstance().get(Calendar.YEAR)) {
                     System.out.println("Invalid year");
                 } else break;
-            } catch (IOException e) {
+            } catch (IOException | NumberFormatException e) {
                 System.out.println("Invalid year");
             }
         }
@@ -270,7 +270,7 @@ public class Main {
                 if (pages <= 5) {
                     System.out.println("Minimum number of pages is 5");
                 } else break;
-            } catch (IOException e) {
+            } catch (IOException | NumberFormatException e) {
                 System.out.println("Invalid number of pages");
             }
         }
@@ -282,7 +282,7 @@ public class Main {
                 if (price <= 0) {
                     System.out.println("Minimum price is 1 Rub.");
                 } else break;
-            } catch (IOException e) {
+            } catch (IOException | NumberFormatException e) {
                 System.out.println("Invalid pricetag");
             }
         }
@@ -293,11 +293,12 @@ public class Main {
                 if (quantity <= 0) {
                     System.out.println("Minimum quantity is 1");
                 } else break;
-            } catch (IOException e) {
+            } catch (IOException | NumberFormatException e) {
                 System.out.println("Invalid quantity");
             }
         }
-        return (new Book(author, title, publisher, year, pages, price, quantity));
+        return new Book(author, title, publisher, year, pages, price, quantity);
+
     }
 
     // Метод для добавления книг в библиотеку вручную.
@@ -441,10 +442,7 @@ public class Main {
     private static void FindBook(ArrayList<Book> list) {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         ArrayList<Book> found = new ArrayList<>();
-        String name;
-        String surname;
-        String title;
-
+        String name, surname, author, title;
         while (true) {
             try {
                 System.out.println("Enter author's name");
@@ -454,7 +452,6 @@ public class Main {
                 System.out.println("Invalid author's name");
             }
         }
-
         while (true) {
             try {
                 System.out.println("Enter author's surname");
@@ -464,9 +461,6 @@ public class Main {
                 System.out.println("Invalid author's surname");
             }
         }
-
-        String author = (surname + " " + name);
-
         while (true) {
             try {
                 System.out.println("Enter title");
@@ -476,6 +470,9 @@ public class Main {
                 System.out.println("Invalid book title");
             }
         }
+                author = (surname + " " + name);
+
+
         boolean wasFound = false;
         for (Book b : list) {
             if (b.author.toLowerCase().equals(author.toLowerCase())
