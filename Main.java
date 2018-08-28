@@ -53,6 +53,17 @@ public class Main {
 
             }
         }
+//        // Заполняем корзину для тестирования
+//        ArrayList<Book> bask = FillLibrary();
+//        if (basket.length() == 0) {
+//            try (FileOutputStream fos = new FileOutputStream(basket);
+//                 ObjectOutputStream oos = new ObjectOutputStream(fos)) {
+//                for (Book b : bask) {
+//                    oos.writeObject(b);
+//                }
+//
+//            }
+//        }
 
         // Заполняем домашнюю библиотеку если она пуста
         ArrayList<Book> homeList = FillLibrary();
@@ -141,7 +152,7 @@ public class Main {
                     System.out.println("Remove book — removes selected book from specified location");
                     System.out.println("Sort books — sorts all books in depository by user defined criteria");
                     System.out.println("Find book — searches for a certain book in shop's depository");
-//                    System.out.println("Add to basket — adds certain book to your basket");
+                    System.out.println("Add to basket — adds certain book to your basket");
 //                    System.out.println("Remove from basket — removes certain book from your basket");
 //                    System.out.println("Clear basket — removes all books from your basket");
 //                    System.out.println("Cash out — pays for all the books in your basket and" +
@@ -153,8 +164,8 @@ public class Main {
                 case "show store":
 
                     try {
-                        ArrayList<Book> temp = ReadFile(storeBooks);
-                        if (temp.size() != 0) {
+                        if (storeBooks.length() != 0) {
+                            ArrayList<Book> temp = ReadFile(storeBooks);
                             System.out.println("Books currently in store: ");
                             for (Book b : temp) {
                                 System.out.println("Author: " + b.author + "/ Title: " + b.title + "/  Publisher: "
@@ -171,9 +182,9 @@ public class Main {
                 case "show basket":
 
                     try {
-                        ArrayList<Book> temp = ReadFile(basket);
-                        System.out.println("Books currently in basket: ");
-                        if (temp.size() != 0) {
+                        if (basket.length() != 0) {
+                            ArrayList<Book> temp = ReadFile(basket);
+                            System.out.println("Books currently in basket: ");
                             for (Book b : temp) {
                                 System.out.println("Author: " + b.author + "/ Title: " + b.title + "/  Publisher: "
                                         + b.publisher + "/ Year: " + b.year + "/ Number of pages: "
@@ -189,8 +200,9 @@ public class Main {
                 case "show library":
 
                     try {
-                        ArrayList<Book> temp = ReadFile(homeLibrary);
-                        if (temp.size() != 0) {
+
+                        if (homeLibrary.length() != 0) {
+                            ArrayList<Book> temp = ReadFile(homeLibrary);
                             System.out.println("Books currently in your library: ");
                             for (Book b : temp) {
                                 System.out.println("Author: " + b.author + "/ Title: " + b.title + "/  Publisher: "
@@ -206,7 +218,7 @@ public class Main {
 
                 case "refill store":
                     try (FileOutputStream fos = new FileOutputStream(storeBooks);
-                            ObjectOutputStream oos = new ObjectOutputStream(fos)) {
+                         ObjectOutputStream oos = new ObjectOutputStream(fos)) {
                         for (Book b : storeList) {
                             oos.writeObject(b);
                         }
@@ -323,10 +335,19 @@ public class Main {
                     }
                     break;
 
-                case "find book":
+                case "find book": {
                     ArrayList<Book> temp = ReadFile(storeBooks);
                     FindBook(temp);
                     break;
+                }
+
+
+
+                case "add to basket": {
+                    ArrayList<Book> temp = ReadFile(storeBooks);
+                    FindBook(temp);
+                    break;
+                }
 
 
             }
@@ -365,15 +386,10 @@ public class Main {
 
     private static class User {
         String name;
-        int age;
-        boolean sex;
-        double money;
+        double money = 2500.00;
 
-        private User(String name, int age, boolean sex, double money) {
+        private User(String name) {
             this.name = name;
-            this.age = age;
-            this.sex = sex;
-            this.money = money;
         }
 
 
@@ -440,7 +456,7 @@ public class Main {
     private static ArrayList<Book> ReadFile(File f) throws IOException {
 
         try (FileInputStream fis = new FileInputStream(f);
-                ObjectInputStream ois = new ObjectInputStream(fis)) {
+             ObjectInputStream ois = new ObjectInputStream(fis)) {
             ArrayList<Book> list = new ArrayList<>();
             while (true) {
                 try {
