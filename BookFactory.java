@@ -3,7 +3,7 @@ import java.util.Calendar;
 
 public class BookFactory {
 
-    public static Book newBook() {
+    public Book newBook() {
         String name, surname, author, title, publisher;
         int year, pages, quantity;
         double price;
