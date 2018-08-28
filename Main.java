@@ -7,12 +7,13 @@
 */
 
 import java.io.*;
+import java.text.DecimalFormat;
 import java.util.*;
 
 public class Main {
 
 
-    public static void main(String[] args) throws IOException {
+    public void main(String[] args) throws IOException {
         File storeDir = new File("Store");
         File storeBooks = new File(storeDir, "Depository");
         File userDir = new File("User");
@@ -43,7 +44,7 @@ public class Main {
         }
 
         // Заполняем книгохранилище магазина если оно пустое
-        ArrayList<Book> storeList = FillStore();
+        ArrayList<Book> storeList = fillStore();
         if (storeBooks.length() == 0) {
             try (FileOutputStream fos = new FileOutputStream(storeBooks);
                  ObjectOutputStream oos = new ObjectOutputStream(fos)) {
@@ -66,7 +67,7 @@ public class Main {
 //        }
 
         // Заполняем домашнюю библиотеку если она пуста
-        ArrayList<Book> homeList = FillLibrary();
+        ArrayList<Book> homeList = fillLibrary();
         if (homeLibrary.length() == 0) {
             try (FileOutputStream fos = new FileOutputStream(homeLibrary);
                  ObjectOutputStream oos = new ObjectOutputStream(fos)) {
@@ -165,7 +166,7 @@ public class Main {
 
                     try {
                         if (storeBooks.length() != 0) {
-                            ArrayList<Book> temp = ReadFile(storeBooks);
+                            ArrayList<Book> temp = readFile(storeBooks);
                             System.out.println("Books currently in store: ");
                             for (Book b : temp) {
                                 System.out.println("Author: " + b.author + "/ Title: " + b.title + "/  Publisher: "
@@ -183,14 +184,19 @@ public class Main {
 
                     try {
                         if (basket.length() != 0) {
-                            ArrayList<Book> temp = ReadFile(basket);
+                            ArrayList<Book> temp = readFile(basket);
                             System.out.println("Books currently in basket: ");
+                            double totalPrice = 0;
                             for (Book b : temp) {
                                 System.out.println("Author: " + b.author + "/ Title: " + b.title + "/  Publisher: "
                                         + b.publisher + "/ Year: " + b.year + "/ Number of pages: "
                                         + b.pages + "/ Price: "
                                         + b.price + " Rub." + "/ Quantity: " + b.quantity);
+                                totalPrice += (b.price * b.quantity);
                             }
+                            DecimalFormat numberFormat = new DecimalFormat("#.00");
+                            System.out.println("Total price of all books in your basket is: "
+                                    + numberFormat.format(totalPrice) + " Rub.");
                         } else System.out.println("Your basket is empty");
                     } catch (EOFException e) {
                         break;
@@ -202,7 +208,7 @@ public class Main {
                     try {
 
                         if (homeLibrary.length() != 0) {
-                            ArrayList<Book> temp = ReadFile(homeLibrary);
+                            ArrayList<Book> temp = readFile(homeLibrary);
                             System.out.println("Books currently in your library: ");
                             for (Book b : temp) {
                                 System.out.println("Author: " + b.author + "/ Title: " + b.title + "/  Publisher: "
@@ -242,10 +248,10 @@ public class Main {
                         String choice = reader.readLine();
                         switch (choice.toLowerCase()) {
                             case "store": {
-                                ArrayList<Book> tempStore = ReadFile(storeBooks);
+                                ArrayList<Book> tempStore = readFile(storeBooks);
                                 try (FileOutputStream fos = new FileOutputStream(storeBooks);
                                      ObjectOutputStream oos = new ObjectOutputStream(fos)) {
-                                    AddBook(tempStore);
+                                    addBook(tempStore);
                                     for (Book b : tempStore) {
                                         oos.writeObject(b);
                                     }
@@ -255,10 +261,10 @@ public class Main {
                                 }
                             }
                             case "library": {
-                                ArrayList<Book> tempLibrary = ReadFile(homeLibrary);
+                                ArrayList<Book> tempLibrary = readFile(homeLibrary);
                                 try (FileOutputStream fos = new FileOutputStream(homeLibrary);
                                      ObjectOutputStream oos = new ObjectOutputStream(fos)) {
-                                    AddBook(tempLibrary);
+                                    addBook(tempLibrary);
                                     for (Book b : tempLibrary) {
                                         oos.writeObject(b);
                                     }
@@ -282,10 +288,10 @@ public class Main {
                         String choice = reader.readLine();
                         switch (choice.toLowerCase()) {
                             case "store": {
-                                ArrayList<Book> temp = ReadFile(storeBooks);
+                                ArrayList<Book> temp = readFile(storeBooks);
                                 try (FileOutputStream fos = new FileOutputStream(storeBooks);
                                      ObjectOutputStream oos = new ObjectOutputStream(fos)) {
-                                    RemoveBook(temp);
+                                    removeBook(temp);
                                     for (Book b : temp) {
                                         oos.writeObject(b);
                                     }
@@ -295,10 +301,10 @@ public class Main {
                                 break;
                             }
                             case "library": {
-                                ArrayList<Book> temp = ReadFile(homeLibrary);
+                                ArrayList<Book> temp = readFile(homeLibrary);
                                 try (FileOutputStream fos = new FileOutputStream(homeLibrary);
                                      ObjectOutputStream oos = new ObjectOutputStream(fos)) {
-                                    RemoveBook(temp);
+                                    removeBook(temp);
                                     for (Book b : temp) {
                                         oos.writeObject(b);
                                     }
@@ -323,7 +329,7 @@ public class Main {
                     System.out.println("Author/Title/Publisher/Year/Number of pages/Price/Quantity");
                     String srt = reader.readLine();
                     try {
-                        ArrayList<Book> temp_sort = ReadFile(storeBooks);
+                        ArrayList<Book> temp_sort = readFile(storeBooks);
                         SortBooks(temp_sort, srt);
                         for (Book b : temp_sort) {
                             System.out.println("Author: " + b.author + "/ Title: " + b.title + "/  Publisher: "
@@ -336,16 +342,80 @@ public class Main {
                     break;
 
                 case "find book": {
-                    ArrayList<Book> temp = ReadFile(storeBooks);
-                    FindBook(temp);
+                    ArrayList<Book> temp = new ArrayList<>();
+                    temp.add(FindBook(readFile(storeBooks)));
+                    if (temp.size() != 0) {
+                        System.out.println("Here is what we managed to find, sir: ");
+                        for (Book b : temp) {
+                            System.out.println("Author: " + b.author + "/ Title: " + b.title + "/  Publisher: "
+                                    + b.publisher + "/ Year: " + b.year + "/ Number of pages: " + b.pages + "/ Price: "
+                                    + b.price + " Rub.");
+                            System.out.println();
+                        }
+                    }
                     break;
                 }
 
 
-
                 case "add to basket": {
-                    ArrayList<Book> temp = ReadFile(storeBooks);
-                    FindBook(temp);
+                    Book b1 = (FindBook(readFile(storeBooks)));
+                    System.out.println("How many would you like. Sir?");
+                    int numberToAdd;
+                    while (true) {
+                        try {
+                            System.out.println("Enter quantity");
+                            numberToAdd = Integer.parseInt(reader.readLine());
+                            if (numberToAdd <= 0) {
+                                System.out.println("Minimum quantity is 1");
+                            } else break;
+                        } catch (IOException | NumberFormatException e) {
+                            System.out.println("Invalid quantity");
+                        }
+                    }
+                    b1.quantity = numberToAdd;
+
+                    try (FileOutputStream fos = new FileOutputStream(basket);
+                         ObjectOutputStream oos = new ObjectOutputStream(fos)) {
+                        ArrayList<Book> tempBasket = new ArrayList<>();
+                        ArrayList<Book> tempStore = readFile(storeBooks);
+                        if (basket.length() != 0) {
+                            tempBasket = readFile(basket);
+                            for (Book b : tempBasket) {
+                                if (b.author.toLowerCase().equals(b1.author.toLowerCase())
+                                        && b.title.toLowerCase().equals(b1.title.toLowerCase())
+                                        && b.publisher.toLowerCase().equals(b1.publisher.toLowerCase())
+                                        && (b.year == b1.year) && (b.pages == b1.pages)
+                                        && (b.price == b1.price)) {
+                                    b.quantity += b1.quantity;
+
+                                }
+                            }
+                            Iterator<Book> bookIterator = tempStore.iterator();
+                            while (bookIterator.hasNext()) {
+                                Book b = bookIterator.next();
+                                if (b.author.toLowerCase().equals(b1.author.toLowerCase())
+                                        && b.title.toLowerCase().equals(b1.title.toLowerCase())
+                                        && b.quantity >= 1) {
+                                    b.quantity -= b1.quantity;
+                                }
+
+                                if (b.quantity <= 0) {
+                                    bookIterator.remove();
+                                }
+
+                            }
+                        } else {
+                            tempBasket.add(b1);
+                        }
+                        for (Book b : tempBasket) {
+                            oos.writeObject(b);
+                        }
+
+                    } catch (EOFException e) {
+                        break;
+                    }
+
+                    System.out.println("Book added to your basket");
                     break;
                 }
 
@@ -362,29 +432,9 @@ public class Main {
 
     }
 
-    private static class Book implements Serializable {
-        String author;
-        String title;
-        String publisher;
-        int year;
-        int pages;
-        int price;
-        int quantity;
-
-        private Book(String author, String title, String publisher, int year, int pages, int price, int quantity) {
-            this.author = author;
-            this.title = title;
-            this.publisher = publisher;
-            this.year = year;
-            this.pages = pages;
-            this.price = price;
-            this.quantity = quantity;
-        }
 
 
-    }
-
-    private static class User {
+    private class User {
         String name;
         double money = 2500.00;
 
@@ -396,7 +446,7 @@ public class Main {
     }
 
     // Создание базовой библиотеки из 10 публикаций.
-    private static ArrayList<Book> FillStore() {
+    private ArrayList<Book> fillStore() {
 
         Book book1 = new Book("King Stephen", "Shining", "Doubleday",
                 1977, 447, 549, 30);
@@ -424,7 +474,7 @@ public class Main {
 
     }
 
-    private static ArrayList<Book> FillLibrary() {
+    private ArrayList<Book> fillLibrary() {
 
         Book book1 = new Book("King Stephen", "Shining", "Doubleday",
                 1977, 447, 549, 1);
@@ -452,8 +502,9 @@ public class Main {
 
     }
 
+
     // Метод чтения книг из файла в список.
-    private static ArrayList<Book> ReadFile(File f) throws IOException {
+    private static ArrayList<Book> readFile(File f) throws IOException {
 
         try (FileInputStream fis = new FileInputStream(f);
              ObjectInputStream ois = new ObjectInputStream(fis)) {
@@ -469,103 +520,12 @@ public class Main {
     }
 
     // Метод ввода данных книги
-    private static Book Newbook() {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-        String name, surname, author, title, publisher;
-        int year, pages, price, quantity;
-        while (true) {
 
-            try {
-                System.out.println("Enter author's name");
-                name = reader.readLine();
-                break;
-            } catch (IOException e) {
-                System.out.println("Invalid author's name");
-            }
-        }
-
-        while (true) {
-            try {
-                System.out.println("Enter author's surname");
-                surname = reader.readLine();
-                break;
-            } catch (IOException e) {
-                System.out.println("Invalid author's surname");
-            }
-        }
-
-        author = (surname + " " + name);
-        while (true) {
-            try {
-                System.out.println("Enter title");
-                title = reader.readLine();
-                break;
-            } catch (IOException e) {
-                System.out.println("Invalid book title");
-            }
-        }
-        while (true) {
-            try {
-                System.out.println("Enter publisher");
-                publisher = reader.readLine();
-                break;
-            } catch (IOException e) {
-                System.out.println("Invalid publisher");
-            }
-        }
-        while (true) {
-            try {
-                System.out.println("Enter the year of publishing");
-                year = Integer.parseInt(reader.readLine());
-                if (year <= 0 || year > Calendar.getInstance().get(Calendar.YEAR)) {
-                    System.out.println("Invalid year");
-                } else break;
-            } catch (IOException | NumberFormatException e) {
-                System.out.println("Invalid year");
-            }
-        }
-        while (true) {
-            try {
-                System.out.println("Enter number of pages");
-                pages = Integer.parseInt(reader.readLine());
-                if (pages <= 5) {
-                    System.out.println("Minimum number of pages is 5");
-                } else break;
-            } catch (IOException | NumberFormatException e) {
-                System.out.println("Invalid number of pages");
-            }
-        }
-
-        while (true) {
-            try {
-                System.out.println("Enter pricetag");
-                price = Integer.parseInt(reader.readLine());
-                if (price <= 0) {
-                    System.out.println("Minimum price is 1 Rub.");
-                } else break;
-            } catch (IOException | NumberFormatException e) {
-                System.out.println("Invalid pricetag");
-            }
-        }
-        while (true) {
-            try {
-                System.out.println("Enter quantity");
-                quantity = Integer.parseInt(reader.readLine());
-                if (quantity <= 0) {
-                    System.out.println("Minimum quantity is 1");
-                } else break;
-            } catch (IOException | NumberFormatException e) {
-                System.out.println("Invalid quantity");
-            }
-        }
-        return new Book(author, title, publisher, year, pages, price, quantity);
-
-    }
 
     // Метод для добавления книг в библиотеку вручную.
-    private static void AddBook(ArrayList<Book> list) {
+    private void addBook(ArrayList<Book> list) {
 
-        Book b1 = Newbook();
+        Book b1 = BookFactory.newBook();
         boolean wasFound = false;
         for (Book b : list) {
             if (b.author.toLowerCase().equals(b1.author.toLowerCase())
@@ -586,7 +546,7 @@ public class Main {
     }
 
     // Метод для удаления книг из библиотеки вручную.
-    private static void RemoveBook(ArrayList<Book> list) {
+    private void removeBook(ArrayList<Book> list) {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         String name, surname, author, title;
         int quantity;
@@ -660,7 +620,7 @@ public class Main {
     }
 
     // Метод сортировки списка книг по разным критериям.
-    private static void SortBooks(ArrayList<Book> list, String s) {
+    private void SortBooks(ArrayList<Book> list, String s) {
 
         switch (s.toLowerCase()) {
 
@@ -717,8 +677,8 @@ public class Main {
             case "price":
                 Collections.sort(list, new Comparator<Book>() {
                             @Override
-                            public int compare(Book o1, Book o2) {
-                                return o1.price - (o2.price);
+                            public double compare(Book o1, Book o2) {
+                                return (o1.price - (o2.price);
                             }
                         }
                 );
@@ -740,9 +700,9 @@ public class Main {
         }
     }
 
-    private static void FindBook(ArrayList<Book> list) {
+    private Book FindBook(ArrayList<Book> list) {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-        ArrayList<Book> found = new ArrayList<>();
+        Book found = new Book("author", "title", "publisher", 0, 0, 0, 1);
         String name, surname, author, title;
         while (true) {
             try {
@@ -778,23 +738,16 @@ public class Main {
         for (Book b : list) {
             if (b.author.toLowerCase().equals(author.toLowerCase())
                     && b.title.toLowerCase().equals(title.toLowerCase())) {
-                found.add(b);
+                found = b;
                 wasFound = true;
             }
         }
-        if (wasFound) {
-            System.out.println("Here is what we managed to find, sir: ");
-            for (Book b : found) {
-                System.out.println("Author: " + b.author + "/ Title: " + b.title + "/  Publisher: "
-                        + b.publisher + "/ Year: " + b.year + "/ Number of pages: " + b.pages + "/ Price: "
-                        + b.price + " Rub." + "/ Quantity: " + b.quantity);
-                System.out.println();
-            }
-        }
+
         if (!wasFound) {
             System.out.println("No such book in store, sir");
             System.out.println();
         }
+        return found;
 
     }
 
