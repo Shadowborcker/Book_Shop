@@ -1,5 +1,6 @@
 import java.io.Serializable;
 import java.util.Objects;
+import java.text.DecimalFormat;
 
 public class Book implements Serializable {
 
@@ -85,6 +86,22 @@ public class Book implements Serializable {
     public int hashCode() {
         return Objects.hash(author, title, publisher, year, pages, price);
     }
+
+    // Переопределяем toString для вывода на экран.
+    private DecimalFormat numberFormat = new DecimalFormat("#.00");
+    @Override
+    public String toString() {
+        return "Book{" +
+                "author='" + author + '\'' +
+                ", title='" + title + '\'' +
+                ", publisher='" + publisher + '\'' +
+                ", year=" + year +
+                ", pages=" + pages +
+                ", price=" + numberFormat.format(price) +
+                ", quantity=" + quantity +
+                '}';
+    }
+
     // Полный конструктор.
     public Book(String author, String title, String publisher, int year, int pages, double price) {
         setAuthor(author);
@@ -95,22 +112,5 @@ public class Book implements Serializable {
         this.price = price;
     }
 
-//    // Сокращенный конструктор для поиска.
-//    public Book(String author, String title) {
-//        setAuthor(author);
-//        setTitle(title);
-//    }
 
-    @Override
-    public String toString() {
-        return "Book{" +
-                "author='" + author + '\'' +
-                ", title='" + title + '\'' +
-                ", publisher='" + publisher + '\'' +
-                ", year=" + year +
-                ", pages=" + pages +
-                ", price=" + price +
-                ", quantity=" + quantity +
-                '}';
-    }
 }

@@ -3,7 +3,7 @@ import java.util.Objects;
 public class User {
 
     String name;
-    double money = 2500.00;
+    double money;
 
     public String getName() {
         return name;
@@ -35,9 +35,8 @@ public class User {
         return Objects.hash(name, money);
     }
 
-    public User(String name, double money) {
+    public User(String name) {
         this.name = name;
-        this.money = money;
     }
 
 }

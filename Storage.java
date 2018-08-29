@@ -3,12 +3,33 @@ import java.util.ArrayList;
 
 public class Storage {
 
-    File storeDir = new File("Store");
-    File storeBooks = new File(storeDir, "Depository");
-    File userDir = new File("User");
-    File basket = new File(userDir, "Basket");
-    File homeDir = new File("Home");
-    File homeLibrary = new File(homeDir, "Library");
+    private File storeDir;
+    private File storeBooks;
+    private File userDir;
+    private File basket;
+    private File homeDir;
+    private File homeLibrary;
+
+    public Storage() {
+        storeDir = new File("Store");
+        storeBooks = new File(storeDir, "Depository");
+        userDir = new File("User");
+        basket = new File(userDir, "Basket");
+        homeDir = new File("Home");
+        homeLibrary = new File(homeDir, "Library");
+    }
+
+    public File getStoreBooks() {
+        return storeBooks;
+    }
+
+    public File getBasket() {
+        return basket;
+    }
+
+    public File getHomeLibrary() {
+        return homeLibrary;
+    }
 
     //Метод создания папок магазина, юзера и дома, а так же файлы книгохранилища, корзины и книгохранилища.
     public void createFolders() {
@@ -55,13 +76,12 @@ public class Storage {
                 list.add((Book) ois.readObject());
             }
         } catch (IOException | ClassNotFoundException e) {
-            return list;
         }
+        return list;
     }
 
     //Метод записи книг из списка в файл.
     public void writeFile(ArrayList<Book> list, File f) {
-
         try (FileOutputStream fos = new FileOutputStream(f);
              ObjectOutputStream oos = new ObjectOutputStream(fos)) {
             for (Book b : list) {

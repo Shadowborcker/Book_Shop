@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Iterator;
 
@@ -28,8 +29,7 @@ public class BookService {
         UserInputReader reader = new UserInputReader();
         while (true) {
             try {
-                System.out.println("How many books would you like to remove?");
-                quantity = Integer.parseInt(reader.askInput());
+                quantity = Integer.parseInt(reader.askInput("How many books would you like to remove?"));
                 if (quantity <= 0) {
                     System.out.println("Minimum quantity is 1");
                 } else break;
@@ -90,9 +90,10 @@ public class BookService {
                 list.sort(Comparator.comparing(Book::getQuantity));
                 break;
             default:
-                System.out.println("Unknown criteria");
+                list.sort(Comparator.comparing(Book::getAuthor));
+                break;
         }
-          System.out.println("Books sorted by " + s);
+
     }
     public ArrayList<Book> findBook(ArrayList<Book> list) {
         ArrayList<Book> found = new ArrayList<>();
@@ -111,6 +112,67 @@ public class BookService {
             System.out.println();
         }
         return found;
+
+    }
+
+    // Создание базовой библиотеки из 10 публикаций.
+    public ArrayList<Book> fillStore() {
+        Book b1 = new Book("King Stephen", "Shining", "Doubleday",
+                1977, 447, 549);
+        Book b2 = new Book("King Stephen", "Cujo", "Viking Press",
+                1981, 319, 453);
+        Book b3 = new Book("Schildt Herbert", "Java: A Beginner's Guide", "Oracle",
+                2002, 602, 1800);
+        Book b4 = new Book("Schildt Herbert", "Java: The Complete Reference", "Oracle",
+                1996, 712, 3600);
+        Book b5 = new Book("Tolkien John Ronald Reuel", "The Hobbit or There and Back Again",
+                "HM", 1937, 313, 352);
+        Book b6 = new Book("Tolkien John Ronald Reuel", "Leaf by Niggle", "Newbook",
+                1945, 252, 300);
+        Book b7 = new Book("Tolkien John Ronald Reuel", "The Fellowship of the Ring",
+                "George Allen & Unwin", 1954, 423, 425);
+        Book b8 = new Book("Tolkien John Ronald Reuel", "The Two Towers",
+                "George Allen & Unwin", 1954, 352, 425);
+        Book b9 = new Book("Tolkien John Ronald Reuel", "Return of the King",
+                "George Allen & Unwin", 1955, 416, 425);
+        Book b10 = new Book("Harrison Harry", "Deathworld", "Harry&Co",
+                1960, 320, 270);
+        ArrayList<Book> list = new ArrayList<>((Arrays.asList(b1, b2, b3, b4, b5, b6, b7, b8, b9, b10)));
+        for (Book b : list) {
+            b.setQuantity(50);
+        }
+        return list;
+
+    }
+
+    // Заполнение домашней библиотеки.
+    public ArrayList<Book> fillLibrary() {
+
+        Book b1 = new Book("King Stephen", "Shining", "Doubleday",
+                1977, 447, 549);
+        Book b2 = new Book("King Stephen", "Cujo", "Viking Press",
+                1981, 319, 453);
+        Book b3 = new Book("Schildt Herbert", "Java: A Beginner's Guide", "Oracle",
+                2002, 602, 1800);
+        Book b4 = new Book("Schildt Herbert", "Java: The Complete Reference", "Oracle",
+                1996, 712, 3600);
+        Book b5 = new Book("Tolkien John Ronald Reuel", "The Hobbit or There and Back Again",
+                "HM", 1937, 313, 352);
+        Book b6 = new Book("Tolkien John Ronald Reuel", "Leaf by Niggle", "Newbook",
+                1945, 252, 300);
+        Book b7 = new Book("Tolkien John Ronald Reuel", "The Fellowship of the Ring",
+                "George Allen & Unwin", 1954, 423, 425);
+        Book b8 = new Book("Tolkien John Ronald Reuel", "The Two Towers",
+                "George Allen & Unwin", 1954, 352, 425);
+        Book b9 = new Book("Tolkien John Ronald Reuel", "Return of the King",
+                "George Allen & Unwin", 1955, 416, 425);
+        Book b10 = new Book("Harrison Harry", "Deathworld", "Harry&Co",
+                1960, 320, 270);
+        ArrayList<Book> list = new ArrayList<>((Arrays.asList(b1, b2, b3, b4, b5, b6, b7, b8, b9, b10)));
+        for (Book b : list) {
+            b.setQuantity(1);
+        }
+        return list;
 
     }
 }

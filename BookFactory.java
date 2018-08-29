@@ -8,34 +8,26 @@ public class BookFactory {
         int year, pages, quantity;
         double price;
         UserInputReader reader = new UserInputReader();
-        System.out.println("Enter author's name");
-        name = reader.askInput();
-        System.out.println("Enter author's surname");
-        surname = reader.askInput();
+        name = reader.askInput("Enter author's name");
+        surname = reader.askInput("Enter author's surname");
         author = (surname + " " + name);
-        System.out.println("Enter title");
-        title = reader.askInput();
-        System.out.println("Enter publisher");
-        publisher = reader.askInput();
-        System.out.println("Enter the year of publishing");
+        title = reader.askInput("Enter title");
+        publisher = reader.askInput("Enter publisher");
         while (true) {
-            System.out.println("Enter the year of publishing");
-            year = Integer.parseInt(reader.askInput());
+            year = Integer.parseInt(reader.askInput("Enter the year of publishing"));
             if (year <= 0 || year > Calendar.getInstance().get(Calendar.YEAR)) {
                 System.out.println("Invalid year");
             } else break;
         }
         while (true) {
-            System.out.println("Enter number of pages");
-            pages = Integer.parseInt(reader.askInput());
+            pages = Integer.parseInt(reader.askInput("Enter number of pages"));
             if (pages <= 5) {
                 System.out.println("Minimum number of pages is 5");
             } else break;
 
         }
         while (true) {
-            System.out.println("Enter pricetag");
-            price = Double.parseDouble(reader.askInput());
+            price = Double.parseDouble(reader.askInput("Enter pricetag"));
             if (price <= 0) {
                 System.out.println("Minimum price is 1 Rub.");
             } else break;

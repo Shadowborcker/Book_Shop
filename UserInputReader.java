@@ -5,9 +5,10 @@ import java.io.InputStreamReader;
 public class UserInputReader {
 
     // Метод запроса строки
-    public String askInput() {
+    public String askInput(String s) {
         String string;
         while (true) {
+            System.out.println(s);
             BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
             try {
                 string = reader.readLine();
@@ -16,6 +17,7 @@ public class UserInputReader {
                 e.printStackTrace();
             }
         }
+
         return string;
     }
 
