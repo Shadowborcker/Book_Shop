@@ -14,34 +14,9 @@ public class Main {
 
 
     public void main(String[] args) throws IOException {
-        File storeDir = new File("Store");
-        File storeBooks = new File(storeDir, "Depository");
-        File userDir = new File("User");
-        File basket = new File(userDir, "Basket");
-        File homeDir = new File("Home");
-        File homeLibrary = new File(homeDir, "Library");
-
-        //создаём папку магазина и файл книгохранилища
-        if (!storeDir.exists()) {
-            storeDir.mkdir();
-        }
-        if (!storeBooks.exists()) {
-            storeBooks.createNewFile();
-        }
-        //создаём папку пользователя и корзины
-        if (!userDir.exists()) {
-            userDir.mkdir();
-        }
-        if (!basket.exists()) {
-            basket.createNewFile();
-        }
-        //создаём папку дома и файл домашней библиотеки
-        if (!homeDir.exists()) {
-            homeDir.mkdir();
-        }
-        if (!homeLibrary.exists()) {
-            homeLibrary.createNewFile();
-        }
+        Storage stor = new Storage();
+        stor.createFolders();
+        stor.createFiles();
 
         // Заполняем книгохранилище магазина если оно пустое
         ArrayList<Book> storeList = fillStore();
@@ -449,53 +424,53 @@ public class Main {
     private ArrayList<Book> fillStore() {
 
         Book book1 = new Book("King Stephen", "Shining", "Doubleday",
-                1977, 447, 549, 30);
+                1977, 447, 549);
         Book book2 = new Book("King Stephen", "Cujo", "Viking Press",
-                1981, 319, 453, 20);
+                1981, 319, 453);
         Book book3 = new Book("Schildt Herbert", "Java: A Beginner's Guide", "Oracle",
-                2002, 602, 1800, 15);
+                2002, 602, 1800);
         Book book4 = new Book("Schildt Herbert", "Java: The Complete Reference", "Oracle",
-                1996, 712, 3600, 17);
+                1996, 712, 3600);
         Book book5 = new Book("Tolkien John Ronald Reuel", "The Hobbit or There and Back Again",
-                "HM", 1937, 313, 352, 23);
+                "HM", 1937, 313, 352);
         Book book6 = new Book("Tolkien John Ronald Reuel", "Leaf by Niggle", "Newbook",
-                1945, 252, 300, 31);
+                1945, 252, 300);
         Book book7 = new Book("Tolkien John Ronald Reuel", "The Fellowship of the Ring",
-                "George Allen & Unwin", 1954, 423, 425, 22);
+                "George Allen & Unwin", 1954, 423, 425);
         Book book8 = new Book("Tolkien John Ronald Reuel", "The Two Towers",
-                "George Allen & Unwin", 1954, 352, 425, 20);
+                "George Allen & Unwin", 1954, 352, 425);
         Book book9 = new Book("Tolkien John Ronald Reuel", "Return of the King",
-                "George Allen & Unwin", 1955, 416, 425, 27);
+                "George Allen & Unwin", 1955, 416, 425);
         Book book10 = new Book("Harrison Harry", "Deathworld", "Harry&Co",
-                1960, 320, 270, 12);
+                1960, 320, 270);
 
 
         return new ArrayList<>((Arrays.asList(book1, book2, book3, book4, book5, book6, book7, book8, book9, book10)));
 
     }
 
-    private ArrayList<Book> fillLibrary() {
+    private static ArrayList<Book> fillLibrary() {
 
         Book book1 = new Book("King Stephen", "Shining", "Doubleday",
-                1977, 447, 549, 1);
+                1977, 447, 549);
         Book book2 = new Book("King Stephen", "Cujo", "Viking Press",
-                1981, 319, 453, 1);
+                1981, 319, 453);
         Book book3 = new Book("Schildt Herbert", "Java: A Beginner's Guide", "Oracle",
-                2002, 602, 1800, 1);
+                2002, 602, 1800);
         Book book4 = new Book("Schildt Herbert", "Java: The Complete Reference", "Oracle",
-                1996, 712, 3600, 1);
+                1996, 712, 3600);
         Book book5 = new Book("Tolkien John Ronald Reuel", "The Hobbit or There and Back Again",
-                "HM", 1937, 313, 352, 1);
+                "HM", 1937, 313, 352);
         Book book6 = new Book("Tolkien John Ronald Reuel", "Leaf by Niggle", "Newbook",
-                1945, 252, 300, 1);
+                1945, 252, 300);
         Book book7 = new Book("Tolkien John Ronald Reuel", "The Fellowship of the Ring",
-                "George Allen & Unwin", 1954, 423, 425, 1);
+                "George Allen & Unwin", 1954, 423, 425);
         Book book8 = new Book("Tolkien John Ronald Reuel", "The Two Towers",
-                "George Allen & Unwin", 1954, 352, 425, 1);
+                "George Allen & Unwin", 1954, 352, 425);
         Book book9 = new Book("Tolkien John Ronald Reuel", "Return of the King",
-                "George Allen & Unwin", 1955, 416, 425, 1);
+                "George Allen & Unwin", 1955, 416, 425);
         Book book10 = new Book("Harrison Harry", "Deathworld", "Harry&Co",
-                1960, 320, 270, 1);
+                1960, 320, 270);
 
 
         return new ArrayList<>((Arrays.asList(book1, book2, book3, book4, book5, book6, book7, book8, book9, book10)));
