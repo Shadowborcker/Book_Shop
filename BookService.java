@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -6,21 +7,12 @@ import java.util.Iterator;
 public class BookService {
 
     // Метод для добавления книг в библиотеку вручную.
-    public void addBook(ArrayList<Book> list) {
+    public void addBook(ArrayList<Book> list) throws IOException {
         int quantity;
         UserInputReader reader = new UserInputReader();
         BookFactory book = new BookFactory();
         Book b1 = book.newBook();
-        while (true) {
-            try {
-                quantity = Integer.parseInt(reader.askInput("How many books would you like to add?"));
-                if (quantity <= 0) {
-                    System.out.println("Minimum quantity is 1");
-                } else break;
-            } catch (NumberFormatException e) {
-                System.out.println("Invalid quantity");
-            }
-        }
+        quantity = reader.askInt("How many books would you like to add?");
         b1.setQuantity(quantity);
         boolean wasFound = false;
         for (Book b : list) {
@@ -35,21 +27,12 @@ public class BookService {
     }
 
     // Метод для удаления книг из библиотеки вручную.
-    public void removeBook(ArrayList<Book> list) {
+    public void removeBook(ArrayList<Book> list) throws IOException{
         int quantity;
         UserInputReader reader = new UserInputReader();
         BookFactory book = new BookFactory();
         Book b1 = book.newBook();
-        while (true) {
-            try {
-                quantity = Integer.parseInt(reader.askInput("How many books would you like to remove?"));
-                if (quantity <= 0) {
-                    System.out.println("Minimum quantity is 1");
-                } else break;
-            } catch (NumberFormatException e) {
-                System.out.println("Invalid quantity");
-            }
-        }
+        quantity = reader.askInt("How many books would you like to remove?");
         b1.setQuantity(quantity);
         Iterator<Book> bookIterator = list.iterator();
         boolean wasFound = false;
@@ -107,7 +90,7 @@ public class BookService {
 
     }
 
-    public ArrayList<Book> findBook(ArrayList<Book> list) {
+    public ArrayList<Book> findBook(ArrayList<Book> list) throws IOException {
         ArrayList<Book> found = new ArrayList<>();
         BookFactory book = new BookFactory();
         Book b1 = book.newBook();

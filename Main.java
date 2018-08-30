@@ -13,7 +13,7 @@ import java.util.*;
 public class Main {
 
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         // Создаём файлы и папки магазина, корзины и домашней библиотеки.
         Storage stor = new Storage();
         BookService bsrv = new BookService();
@@ -34,10 +34,22 @@ public class Main {
         //Отображаем меню и обрабатываем команды пользователя.
         Menu menu = new Menu();
         UserInputReader input = new UserInputReader();
-        menu.greetingsMenu();
+        try {
+            menu.greetingsMenu();
+        } catch (IOException e) {
+            System.out.println("Invalid input");
+            e.printStackTrace();
+        }
         do {
-            String item = input.askInput("Input command");
-            menu.chooseMenuItem(item);
+            try {
+                String item = input.askString("Input command");
+                menu.chooseMenuItem(item);
+            } catch (IOException e) {
+                System.out.println("Invalid input");
+                e.printStackTrace();
+                break;
+            }
+
         } while (true);
     }
 

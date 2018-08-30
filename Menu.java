@@ -1,6 +1,8 @@
 import java.io.File;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 
 public class Menu {
@@ -18,69 +20,44 @@ public class Menu {
 
     User user;
 
-    public void greetingsMenu() {
+    public void greetingsMenu() throws IOException {
         UserInputReader input = new UserInputReader();
         System.out.println("Welcome to Black Books, please introduce yourself");
-        String name = input.askInput("Enter your name, Sir");
+        String name = input.askString("Enter your name, Sir");
         user = new User(name);
         System.out.println("Hello, " + user.getName() + " , your balance is "
                 + user.getMoney() + "Rub." + ", how may I be of service?\n" +
                 "Use \"Show menu\" for commands list.");
     }
 
-    public void chooseMenuItem(String input) {
-        switch (input.toLowerCase()) {
-
-            case "show menu":
-                MenuItemShowMenu showMenu = new MenuItemShowMenu();
-                showMenu.print();
-                break;
-            case "show books":
-                MenuItemShowBooks showStore = new MenuItemShowBooks();
-                showStore.print();
-                break;
-            case "refill":
-                MenuItemRefill ref = new MenuItemRefill();
-                ref.reFill();
-                break;
-            case "add books":
-                MenuItemAddBook add = new MenuItemAddBook();
-                add.addbook();
-                break;
-            case "remove books":
-                MenuItemRemoveBook rem = new MenuItemRemoveBook();
-                rem.removebook();
-                break;
-            case "sort books":
-                MenuItemSort srt = new MenuItemSort();
-                srt.print();
-                break;
-            case "search":
-                MenuItemSearch srch = new MenuItemSearch();
-                srch.print();
-                break;
-            case "cash out":
-                MenuItemCashOut csht = new MenuItemCashOut();
-                csht.cashOut();
-                break;
-        }
-
+    public void chooseMenuItem(String input) throws IOException {
+        HashMap<String, MenuItem> menumap = new HashMap<>();
+        menumap.put("show menu", new MenuItemShowMenu());
+        menumap.put("show books", new MenuItemShowBooks());
+        menumap.put("refill", new MenuItemRefill());
+        menumap.put("add book", new MenuItemAddBook());
+        menumap.put("remove book", new MenuItemRemoveBook());
+        menumap.put("sort", new MenuItemSort());
+        menumap.put("search", new MenuItemSearch());
+        menumap.put("cash out", new MenuItemCashOut());
+        menumap.put("exit", new MenuItemExit());
+        menumap.get(input.toLowerCase()).select();
     }
+
 
     interface MenuItem {
         String description();
+
+        void select() throws IOException;
     }
 
-    interface SubMenu {
-        File submenu();
-    }
 
     class MenuItemShowMenu implements MenuItem {
         public String description() {
             return "Showing all available commands";
         }
 
-        public void print() {
+        public void select() {
 
             System.out.println("Show books — displays the list of all books in specified location\n" +
                     "Refill  — refills specified book storage\n" +
@@ -95,15 +72,28 @@ public class Menu {
 
     }
 
+    class MenuItemExit implements MenuItem {
+        public String description() {
+            return "Terminating program.\n" +
+                    "See you again, sir!";
+        }
 
-    class MenuItemShowBooks implements MenuItem, SubMenu {
+        public void select() {
+            System.out.println(description());
+            System.exit(0);
+        }
+
+    }
+
+
+    class MenuItemShowBooks implements MenuItem {
         UserInputReader reader = new UserInputReader();
         Storage stor = new Storage();
-        File f = submenu();
         String choice;
+        File f = new File("Temp");
 
-        public File submenu() {
-            String sub = reader.askInput("Where would you like to look?\n" +
+        public File submenu() throws IOException {
+            String sub = reader.askString("Where would you like to look?\n" +
                     "Store\\Basket\\Library");
             switch (sub.toLowerCase()) {
                 case "store": {
@@ -133,7 +123,8 @@ public class Menu {
             return "Showing all books in " + choice;
         }
 
-        public void print() {
+        public void select() throws IOException {
+            f = submenu();
             DecimalFormat numberFormat = new DecimalFormat("#.00");
             double totalprice = 0;
 
@@ -155,16 +146,16 @@ public class Menu {
         }
     }
 
-    class MenuItemRefill implements MenuItem, SubMenu {
+    class MenuItemRefill implements MenuItem {
         BookService bsrv = new BookService();
         UserInputReader reader = new UserInputReader();
         Storage stor = new Storage();
         ArrayList<Book> torefill = new ArrayList<>();
-        File f = submenu();
+        File f = new File("Temp");
         String choice;
 
-        public File submenu() {
-            String sub = reader.askInput("What depository would you like to refill?\n" +
+        private File submenu() throws IOException {
+            String sub = reader.askString("What depository would you like to refill?\n" +
                     "Store\\Library");
             switch (sub.toLowerCase()) {
                 case "store": {
@@ -191,22 +182,23 @@ public class Menu {
             return "Refilling " + choice;
         }
 
-        public void reFill() {
+        public void select() throws IOException {
+            f = submenu();
             stor.writeFile(torefill, f);
             System.out.println(description());
             System.out.println(choice + " is refilled");
         }
     }
 
-    class MenuItemAddBook implements MenuItem, SubMenu {
+    class MenuItemAddBook implements MenuItem {
         BookService bsrv = new BookService();
         UserInputReader reader = new UserInputReader();
         Storage stor = new Storage();
-        File f = submenu();
+        File f = new File("Temp");
         String choice;
 
-        public File submenu() {
-            String sub = reader.askInput("Where would you like to add a new book?\n" +
+        private File submenu() throws IOException {
+            String sub = reader.askString("Where would you like to add a new book?\n" +
                     "Store\\Basket\\Library");
             switch (sub.toLowerCase()) {
                 case "store": {
@@ -236,7 +228,8 @@ public class Menu {
             return "Adding to " + choice;
         }
 
-        public void addbook() {
+        public void select() throws IOException {
+            f = submenu();
             if (f.length() != 0) {
                 ArrayList<Book> temp = stor.readFile(f);
                 System.out.println(description());
@@ -253,15 +246,15 @@ public class Menu {
         }
     }
 
-    class MenuItemRemoveBook implements MenuItem, SubMenu {
+    class MenuItemRemoveBook implements MenuItem {
         BookService bsrv = new BookService();
         UserInputReader reader = new UserInputReader();
         Storage stor = new Storage();
-        File f = submenu();
+        File f = new File("Temp");
         String choice;
 
-        public File submenu() {
-            String sub = reader.askInput("From where would you like to remove books?\n" +
+        private File submenu() throws IOException {
+            String sub = reader.askString("From where would you like to remove books?\n" +
                     "Store\\Basket\\Library");
             switch (sub.toLowerCase()) {
                 case "store": {
@@ -291,7 +284,8 @@ public class Menu {
             return "Removing books from " + choice;
         }
 
-        public void removebook() {
+        public void select() throws IOException {
+            f = submenu();
             if (f.length() != 0) {
                 ArrayList<Book> temp = stor.readFile(f);
                 if (temp.size() != 0) {
@@ -306,14 +300,14 @@ public class Menu {
         }
     }
 
-    class MenuItemSort implements MenuItem, SubMenu {
+    class MenuItemSort implements MenuItem {
         UserInputReader reader = new UserInputReader();
         Storage stor = new Storage();
-        File f = submenu();
+        File f = new File("Temp");
         String choice;
 
-        public File submenu() {
-            String sub = reader.askInput("Where would you like to sort the books?\n" +
+        private File submenu() throws IOException {
+            String sub = reader.askString("Where would you like to sort the books?\n" +
                     "Store\\Basket\\Library");
             switch (sub.toLowerCase()) {
                 case "store": {
@@ -343,13 +337,14 @@ public class Menu {
             return "Sorting all books in " + choice;
         }
 
-        public void print() {
+        public void select() throws IOException {
+            f = submenu();
             BookService serv = new BookService();
 
             if (f.length() != 0) {
                 ArrayList<Book> temp = stor.readFile(f);
                 if (temp.size() != 0) {
-                    String sorttype = reader.askInput("Choose sorting criteria\n" +
+                    String sorttype = reader.askString("Choose sorting criteria\n" +
                             "Author\\Title\\Publisher\\Year\\Pages\\Price\\Quantity");
                     serv.sortBooks(temp, sorttype);
                     System.out.println(description());
@@ -366,14 +361,14 @@ public class Menu {
 
     }
 
-    class MenuItemSearch implements MenuItem, SubMenu {
+    class MenuItemSearch implements MenuItem {
         UserInputReader reader = new UserInputReader();
         Storage stor = new Storage();
-        File f = submenu();
+        File f = new File("Temp");
         String choice;
 
-        public File submenu() {
-            String sub = reader.askInput("Where would you like to search?\n" +
+        private File submenu() throws IOException {
+            String sub = reader.askString("Where would you like to search?\n" +
                     "Store\\Basket\\Library");
             switch (sub.toLowerCase()) {
                 case "store": {
@@ -403,7 +398,8 @@ public class Menu {
             return "Searching for a book in " + choice;
         }
 
-        public void print() {
+        public void select() throws IOException {
+            f = submenu();
             BookService serv = new BookService();
 
             if (f.length() != 0) {
@@ -431,7 +427,7 @@ public class Menu {
             return "Paying for all the books in basket";
         }
 
-        public void cashOut() {
+        public void select() {
             if (stor.getBasket().length() != 0) {
                 ArrayList<Book> bskt = stor.readFile(stor.getBasket());
                 ArrayList<Book> str = stor.readFile(stor.getStoreBooks());
