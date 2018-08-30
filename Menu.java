@@ -1,6 +1,4 @@
-import java.io.EOFException;
 import java.io.File;
-import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -434,7 +432,6 @@ public class Menu {
         }
 
         public void cashOut() {
-            BookService serv = new BookService();
             if (stor.getBasket().length() != 0) {
                 ArrayList<Book> bskt = stor.readFile(stor.getBasket());
                 ArrayList<Book> str = stor.readFile(stor.getStoreBooks());
