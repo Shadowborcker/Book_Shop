@@ -6,18 +6,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 public class Menu {
-
-
-    private int input;
-
-    public int getInput() {
-        return input;
-    }
-
-    public void setInput(int input) {
-        this.input = input;
-    }
-
+    
     User user;
 
     public void greetingsMenu() throws IOException {
@@ -30,7 +19,7 @@ public class Menu {
                 "Use \"Show menu\" for commands list.");
     }
 
-    public void chooseMenuItem(String input) throws IOException {
+    private HashMap<String, MenuItem> menuMap() {
         HashMap<String, MenuItem> menumap = new HashMap<>();
         menumap.put("show menu", new MenuItemShowMenu());
         menumap.put("show books", new MenuItemShowBooks());
@@ -41,7 +30,15 @@ public class Menu {
         menumap.put("search", new MenuItemSearch());
         menumap.put("cash out", new MenuItemCashOut());
         menumap.put("exit", new MenuItemExit());
-        menumap.get(input.toLowerCase()).select();
+        return menumap;
+    }
+
+    private HashMap<String, MenuItem> map = menuMap();
+
+    public void chooseMenuItem(String input) throws IOException {
+        if (map.containsKey(input.toLowerCase())) {
+            map.get(input.toLowerCase()).select();
+        } else System.out.println("Invalid command, Sir");
     }
 
 
@@ -467,7 +464,7 @@ public class Menu {
                         }
                         ArrayList<Book> clear = new ArrayList<>();
                         stor.writeFile(clear, stor.getBasket());
-                    }
+                    } else System.out.println("I'm sorry, Sir, you don't seem to have enough money");
                 } else System.out.println("Basket is empty, Sir");
 
 
