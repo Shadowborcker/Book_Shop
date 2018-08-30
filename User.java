@@ -2,8 +2,8 @@ import java.util.Objects;
 
 public class User {
 
-    String name;
-    double money;
+    private String name;
+    private double money = 2500.00;
 
     public String getName() {
         return name;

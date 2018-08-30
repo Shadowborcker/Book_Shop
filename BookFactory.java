@@ -33,13 +33,13 @@ public class BookFactory {
             } else break;
         }
 //        while (true) {
-//                System.out.println("Enter quantity");
-//                quantity = Integer.parseInt(reader.askInput());
+//                quantity = Integer.parseInt(reader.askInput("Enter quantity"));
 //                if (quantity <= 0) {
 //                    System.out.println("Minimum quantity is 1");
 //                } else break;
 //        }
-        return new Book(author, title, publisher, year, pages, price);
+        Book b = new Book(author, title, publisher, year, pages, price);
+        return b;
 
     }
 }

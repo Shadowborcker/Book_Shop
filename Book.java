@@ -69,17 +69,15 @@ public class Book implements Serializable {
     }
 
     //Переопределяем equals и hashCode для сравнения книг, поле количество не учитывается.
+
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Book book = (Book) o;
-        return year == book.year &&
-                pages == book.pages &&
-                Double.compare(book.price, price) == 0 &&
-                Objects.equals(author, book.author) &&
-                Objects.equals(title, book.title) &&
-                Objects.equals(publisher, book.publisher);
+        return Objects.equals(author.toLowerCase(), book.author.toLowerCase()) &&
+                Objects.equals(title.toLowerCase(), book.title.toLowerCase());
     }
 
     @Override

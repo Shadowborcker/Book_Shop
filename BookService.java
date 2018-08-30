@@ -7,26 +7,39 @@ public class BookService {
 
     // Метод для добавления книг в библиотеку вручную.
     public void addBook(ArrayList<Book> list) {
+        int quantity;
+        UserInputReader reader = new UserInputReader();
         BookFactory book = new BookFactory();
         Book b1 = book.newBook();
+        while (true) {
+            try {
+                quantity = Integer.parseInt(reader.askInput("How many books would you like to add?"));
+                if (quantity <= 0) {
+                    System.out.println("Minimum quantity is 1");
+                } else break;
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid quantity");
+            }
+        }
+        b1.setQuantity(quantity);
         boolean wasFound = false;
         for (Book b : list) {
-            if (b.equals(b1)){
-                b.setQuantity(b.getQuantity()+b1.getQuantity());
+            if (b.equals(b1)) {
+                b.setQuantity(b.getQuantity() + b1.getQuantity());
                 wasFound = true;
             }
         }
         if (!wasFound) {
             list.add(b1);
         }
-        System.out.println("New book added");
-        System.out.println();
-
     }
+
     // Метод для удаления книг из библиотеки вручную.
     public void removeBook(ArrayList<Book> list) {
         int quantity;
         UserInputReader reader = new UserInputReader();
+        BookFactory book = new BookFactory();
+        Book b1 = book.newBook();
         while (true) {
             try {
                 quantity = Integer.parseInt(reader.askInput("How many books would you like to remove?"));
@@ -37,8 +50,6 @@ public class BookService {
                 System.out.println("Invalid quantity");
             }
         }
-        BookFactory book = new BookFactory();
-        Book b1 = book.newBook();
         b1.setQuantity(quantity);
         Iterator<Book> bookIterator = list.iterator();
         boolean wasFound = false;
@@ -58,13 +69,13 @@ public class BookService {
         if (wasFound) {
             System.out.println("Book(s) removed successfully");
             System.out.println();
-        }
-        else  {
+        } else {
             System.out.println("No such book, sir");
             System.out.println();
         }
 
     }
+
     // Метод сортировки списка книг по разным критериям.
     public void sortBooks(ArrayList<Book> list, String s) {
         switch (s.toLowerCase()) {
@@ -95,6 +106,7 @@ public class BookService {
         }
 
     }
+
     public ArrayList<Book> findBook(ArrayList<Book> list) {
         ArrayList<Book> found = new ArrayList<>();
         BookFactory book = new BookFactory();
