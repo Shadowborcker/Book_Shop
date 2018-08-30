@@ -31,7 +31,7 @@ public class Storage {
         return homeLibrary;
     }
 
-    //Метод создания папок магазина, юзера и дома, а так же файлы книгохранилища, корзины и книгохранилища.
+    //Метод создания папок магазина, юзера и дома.
     public void createFolders() {
 
         if (!storeDir.exists()) {
@@ -47,7 +47,7 @@ public class Storage {
         }
 
     }
-
+    //Метод создания файлов книгохранилища, корзины и библиотеки
     public void createFiles() {
         try {
             if (!storeBooks.exists()) {
