@@ -5,7 +5,7 @@ import java.util.Calendar;
 
 public class UserInputReader {
 
-    BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+    private BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
     // Метод запроса строки
     public String askString(String s) throws IOException {
