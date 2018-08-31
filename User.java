@@ -3,7 +3,7 @@ import java.util.Objects;
 public class User {
 
     private String name;
-    private double money = 2500.00;
+    private double money = 3000.00;
 
     public String getName() {
         return name;
