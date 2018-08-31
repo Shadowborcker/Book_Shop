@@ -5,12 +5,13 @@ import java.util.Calendar;
 
 public class UserInputReader {
 
+    BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+
     // Метод запроса строки
     public String askString(String s) throws IOException {
         String string;
         while (true) {
             System.out.println(s);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
                 string = reader.readLine();
                 break;
             }
@@ -20,7 +21,6 @@ public class UserInputReader {
     public int askInt(String s) throws IOException {
         int i;
         System.out.println(s);
-        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         while (true) {
             i = Integer.parseInt( reader.readLine());
             if (i <= 0) {
@@ -34,7 +34,6 @@ public class UserInputReader {
     public double askDouble(String s) throws IOException {
         double i;
         System.out.println(s);
-        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         while (true) {
             i = Double.parseDouble( reader.readLine());
             if (i <= 0) {
@@ -49,7 +48,6 @@ public class UserInputReader {
         int i;
         while (true) {
             System.out.println(s);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
                 i = Integer.parseInt( reader.readLine());
                 if (i <= 0 || i > Calendar.getInstance().get(Calendar.YEAR)) {
                     System.out.println("Invalid year");

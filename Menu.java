@@ -126,7 +126,7 @@ public class Menu {
             double totalprice = 0;
 
             if (f.length() != 0) {
-                ArrayList<Book> temp = stor.readFile(f);
+                ArrayList<Book> temp = stor.read(f);
                 if (temp.size() != 0) {
                     System.out.println(description());
                     for (Book b : temp) {
@@ -181,7 +181,7 @@ public class Menu {
 
         public void select() throws IOException {
             f = submenu();
-            stor.writeFile(torefill, f);
+            stor.write(torefill, f);
             System.out.println(description());
             System.out.println(choice + " is refilled");
         }
@@ -228,15 +228,15 @@ public class Menu {
         public void select() throws IOException {
             f = submenu();
             if (f.length() != 0) {
-                ArrayList<Book> temp = stor.readFile(f);
+                ArrayList<Book> temp = stor.read(f);
                 System.out.println(description());
                 bsrv.addBook(temp);
-                stor.writeFile(temp, f);
+                stor.write(temp, f);
             } else {
                 ArrayList<Book> temp = new ArrayList<>();
                 System.out.println(description());
                 bsrv.addBook(temp);
-                stor.writeFile(temp, f);
+                stor.write(temp, f);
             }
             System.out.println("Book(s) added to " + choice);
             System.out.println();
@@ -284,11 +284,11 @@ public class Menu {
         public void select() throws IOException {
             f = submenu();
             if (f.length() != 0) {
-                ArrayList<Book> temp = stor.readFile(f);
+                ArrayList<Book> temp = stor.read(f);
                 if (temp.size() != 0) {
                     System.out.println(description());
                     bsrv.removeBook(temp);
-                    stor.writeFile(temp, f);
+                    stor.write(temp, f);
                 } else System.out.println(choice + " is empty, Sir");
             } else System.out.println(choice + " is empty, Sir");
             System.out.println();
@@ -339,7 +339,7 @@ public class Menu {
             BookService serv = new BookService();
 
             if (f.length() != 0) {
-                ArrayList<Book> temp = stor.readFile(f);
+                ArrayList<Book> temp = stor.read(f);
                 if (temp.size() != 0) {
                     String sorttype = reader.askString("Choose sorting criteria\n" +
                             "Author\\Title\\Publisher\\Year\\Pages\\Price\\Quantity");
@@ -400,7 +400,7 @@ public class Menu {
             BookService serv = new BookService();
 
             if (f.length() != 0) {
-                ArrayList<Book> temp = stor.readFile(f);
+                ArrayList<Book> temp = stor.read(f);
                 if (temp.size() != 0) {
                     temp = serv.findBook(temp);
                     System.out.println(description());
@@ -426,9 +426,9 @@ public class Menu {
 
         public void select() {
             if (stor.getBasket().length() != 0) {
-                ArrayList<Book> bskt = stor.readFile(stor.getBasket());
-                ArrayList<Book> str = stor.readFile(stor.getStoreBooks());
-                ArrayList<Book> lib = stor.readFile(stor.getHomeLibrary());
+                ArrayList<Book> bskt = stor.read(stor.getBasket());
+                ArrayList<Book> str = stor.read(stor.getStoreBooks());
+                ArrayList<Book> lib = stor.read(stor.getHomeLibrary());
                 if (bskt.size() != 0) {
                     System.out.println(description());
                     for (Book b : bskt) {
@@ -449,7 +449,7 @@ public class Menu {
                                     storeIterator.remove();
                                 }
                             }
-                            stor.writeFile(str, stor.getStoreBooks());
+                            stor.write(str, stor.getStoreBooks());
                             boolean wasfoud = false;
                             for (Book bl : lib) {
                                 if (bb.equals(bl)) {
@@ -460,10 +460,10 @@ public class Menu {
                             if (wasfoud) {
                                 lib.addAll(bskt);
                             }
-                            stor.writeFile(lib, stor.getHomeLibrary());
+                            stor.write(lib, stor.getHomeLibrary());
                         }
                         ArrayList<Book> clear = new ArrayList<>();
-                        stor.writeFile(clear, stor.getBasket());
+                        stor.write(clear, stor.getBasket());
                     } else System.out.println("I'm sorry, Sir, you don't seem to have enough money");
                 } else System.out.println("Basket is empty, Sir");
 

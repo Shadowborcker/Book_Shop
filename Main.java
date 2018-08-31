@@ -7,33 +7,31 @@
 */
 
 import java.io.*;
-import java.text.DecimalFormat;
-import java.util.*;
 
 public class Main {
 
 
     public static void main(String[] args) {
         // Создаём файлы и папки магазина, корзины и домашней библиотеки.
-        Storage stor = new Storage();
-        BookService bsrv = new BookService();
-        stor.createFolders();
-        stor.createFiles();
+        Storage storage = new Storage();
+        BookService bookService = new BookService();
+        storage.createFolders();
+        storage.createFiles();
 
         // Заполняем книгохранилище магазина если оно пустое
-        if (stor.getStoreBooks().length() == 0) {
-            stor.writeFile(bsrv.fillStore(), stor.getStoreBooks());
+        if (storage.getStoreBooks().length() == 0) {
+            storage.write(bookService.fillStore(), storage.getStoreBooks());
         }
 
 
         // Заполняем домашнюю библиотеку если она пуста
-        if (stor.getHomeLibrary().length() == 0) {
-            stor.writeFile(bsrv.fillLibrary(), stor.getHomeLibrary());
+        if (storage.getHomeLibrary().length() == 0) {
+            storage.write(bookService.fillLibrary(), storage.getHomeLibrary());
         }
 
         //Отображаем меню и обрабатываем команды пользователя.
         Menu menu = new Menu();
-        UserInputReader input = new UserInputReader();
+        UserInputReader userInputReader = new UserInputReader();
         try {
             menu.greetingsMenu();
         } catch (IOException e) {
@@ -42,7 +40,7 @@ public class Main {
         }
         do {
             try {
-                String item = input.askString("Input command");
+                String item = userInputReader.askString("Input command");
                 menu.chooseMenuItem(item);
             } catch (IOException e) {
                 System.out.println("Invalid input");

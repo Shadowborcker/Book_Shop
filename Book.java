@@ -86,9 +86,9 @@ public class Book implements Serializable {
     }
 
     // Переопределяем toString для вывода на экран.
-    private DecimalFormat numberFormat = new DecimalFormat("#.00");
     @Override
     public String toString() {
+        DecimalFormat numberFormat = new DecimalFormat("#.00");
         return "Book{" +
                 "author='" + author + '\'' +
                 ", title='" + title + '\'' +
@@ -102,8 +102,8 @@ public class Book implements Serializable {
 
     // Полный конструктор.
     public Book(String author, String title, String publisher, int year, int pages, double price) {
-        setAuthor(author);
-        setTitle(title);
+        this.author = author;
+        this.title = title;
         this.publisher = publisher;
         this.year = year;
         this.pages = pages;

@@ -5,43 +5,41 @@ import java.util.Comparator;
 import java.util.Iterator;
 
 public class BookService {
+    private UserInputReader userInputReader = new UserInputReader();
+    private BookFactory bookFactory = new BookFactory();
 
     // Метод для добавления книг в библиотеку вручную.
     public void addBook(ArrayList<Book> list) throws IOException {
-        int quantity;
-        UserInputReader reader = new UserInputReader();
-        BookFactory book = new BookFactory();
-        Book b1 = book.newBook();
-        quantity = reader.askInt("How many books would you like to add?");
-        b1.setQuantity(quantity);
+        Book newBook = bookFactory.newBook();
+        int quantity = userInputReader.askInt("How many books would you like to add?");
+        newBook.setQuantity(quantity);
         boolean wasFound = false;
         for (Book b : list) {
-            if (b.equals(b1)) {
-                b.setQuantity(b.getQuantity() + b1.getQuantity());
+            if (b.equals(newBook)) {
+                b.setQuantity(b.getQuantity() + newBook.getQuantity());
                 wasFound = true;
+                break;
             }
         }
         if (!wasFound) {
-            list.add(b1);
+            list.add(newBook);
         }
     }
 
     // Метод для удаления книг из библиотеки вручную.
     public void removeBook(ArrayList<Book> list) throws IOException{
-        int quantity;
-        UserInputReader reader = new UserInputReader();
-        BookFactory book = new BookFactory();
-        Book b1 = book.newBook();
-        quantity = reader.askInt("How many books would you like to remove?");
-        b1.setQuantity(quantity);
+        Book newBook = bookFactory.newBook();
+        int quantity = userInputReader.askInt("How many books would you like to remove?");
+        newBook.setQuantity(quantity);
         Iterator<Book> bookIterator = list.iterator();
         boolean wasFound = false;
         while (bookIterator.hasNext()) {
             Book b = bookIterator.next();
-            if (b.equals(b1)
+            if (b.equals(newBook)
                     & b.getQuantity() >= 1) {
                 wasFound = true;
-                b.setQuantity(b.getQuantity() - b1.getQuantity());
+                b.setQuantity(b.getQuantity() - newBook.getQuantity());
+                break;
             }
 
             if (b.getQuantity() <= 0) {
@@ -53,7 +51,7 @@ public class BookService {
             System.out.println("Book(s) removed successfully");
             System.out.println();
         } else {
-            System.out.println("No such book, sir");
+            System.out.println("No such bookFactory, sir");
             System.out.println();
         }
 
@@ -92,8 +90,7 @@ public class BookService {
 
     public ArrayList<Book> findBook(ArrayList<Book> list) throws IOException {
         ArrayList<Book> found = new ArrayList<>();
-        BookFactory book = new BookFactory();
-        Book b1 = book.newBook();
+        Book b1 = bookFactory.newBook();
         boolean wasFound = false;
         for (Book b : list) {
             if (b1.equals(b)) {
@@ -103,7 +100,7 @@ public class BookService {
         }
 
         if (!wasFound) {
-            System.out.println("No such book in store, sir");
+            System.out.println("No such bookFactory in store, sir");
             System.out.println();
         }
         return found;

@@ -68,24 +68,25 @@ public class Storage {
     }
 
     // Метод чтения книг из файла в список.
-    public ArrayList<Book> readFile(File f) {
+    public ArrayList<Book> read(File f) {
         ArrayList<Book> list = new ArrayList<>();
-        try (FileInputStream fis = new FileInputStream(f);
-             ObjectInputStream ois = new ObjectInputStream(fis)) {
+        try (FileInputStream fileInputStream = new FileInputStream(f);
+             ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream)) {
             while (true) {
-                list.add((Book) ois.readObject());
+                list.add((Book) objectInputStream.readObject());
             }
         } catch (IOException | ClassNotFoundException e) {
+//            e.printStackTrace();
         }
         return list;
     }
 
     //Метод записи книг из списка в файл.
-    public void writeFile(ArrayList<Book> list, File f) {
-        try (FileOutputStream fos = new FileOutputStream(f);
-             ObjectOutputStream oos = new ObjectOutputStream(fos)) {
+    public void write(ArrayList<Book> list, File f) {
+        try (FileOutputStream fileOutputStream = new FileOutputStream(f);
+             ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream)) {
             for (Book b : list) {
-                oos.writeObject(b);
+                objectOutputStream.writeObject(b);
             }
 
         } catch (IOException e) {
